@@ -8,7 +8,7 @@ import serial
 import time
 #初期化処理----------------------------------------------
 #デバイス名とボーレートを設定しポートをオープン 
-ser = serial.Serial('/dev/cu.usbserial-0001', 115200)  
+ser = serial.Serial('/dev/cu.usbserial-14130', 115200)  
 #起動メッセージ読み飛ばし
 time.sleep(3)
 ser.reset_input_buffer()
