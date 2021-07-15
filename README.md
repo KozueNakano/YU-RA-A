@@ -10,11 +10,11 @@ https://github.com/bdring/Grbl_Esp32/wiki
 
 
 ## 各部の名称、用途
-- 回路BOX部分
+- 回路BOX部分  
 ![](/picture/1.jpeg)
-- ライト可動部分
+- ライト可動部分  
 ![](/picture/3.jpeg)
-- モーター部分
+- モーター部分  
 ![](/picture/2.jpeg)
 ![](/picture/4.jpeg)
 
