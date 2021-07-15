@@ -8,7 +8,7 @@ import serial
 import time
 #初期化処理----------------------------------------------
 #デバイス名とボーレートを設定しポートをオープン 
-ser = serial.Serial('/dev/cu.usbserial-14130', 115200)  
+ser = serial.Serial('/dev/cu.usbserial-141420', 115200)  
 #起動メッセージ読み飛ばし
 time.sleep(3)
 ser.reset_input_buffer()
@@ -22,61 +22,46 @@ line = ser.readline()#ホーミングに関しては完了してからok\r\nが�
 print(line)
 
 #----------------------------------------------初期化処理
-
-
+#jogコマンドによる移動関数
+def jogCommand(position , rate):#mm,mm/min
+    ser.write(str.encode("$J=X"+str(position)+" F"+str(rate)+"\n"))      #X軸10mmへ500mm/minで移動
+    line = ser.readline()
+    print(line)
+    return
+#移動距離と移動速度から、完了までの時間ブロッキングで待機する関数
+def sleepUntilMotionComplete(travel , rate):#mm,mm/min
+    sleepSec = (travel/rate)*60
+    time.sleep(sleepSec)
+    return
+#照明コマンドexample----------------------------------------------
+ser.write(str.encode('M67 E0 Q50\n'))
+ser.write(str.encode('M67 E1 Q50\n'))
+line = ser.readline()
+print(line)
+#----------------------------------------------照明コマンドexample
 
 #移動コマンドexample----------------------------------------------
 jogCancelCode=[0x85,0x0D,0x0A]#ジョグキャンセルコマンド
 jogCancel =bytes(jogCancelCode)
 #通常のGコードはブロッキングで実行されるので、同期して操作したい場合は、ジョグコマンドを使用する。
-#$J=Xnnn Fnnnの形で動作する。Fは送り速度。tooltrayの場合は10000に固定でいいと思う。あまり速いと脱調する。
+#$J=Xnnn Fnnnの形で動作する。Fは送り速度。あまり速いと脱調する。
 #0x85 ジョグキャンセルコマンドで、現在のコマンドを中断し、それまでに送ったジョグコマンドのバッファをクリアできる。
 #新規のコマンドの発行前に常にジョグキャンセルを送信することで、リアルタイムの操作を簡単に作れる。
-#おそらく上記の方法はGRBLのモーションスムージングをだいなしにしている
+ser.write(jogCancel)        #コマンド送信
+line = ser.readline()       #GRBLからの応答ダンプ
+print(line)
 
+
+#ジョグコマンドは、実行の完了ではなくバッファへの到達をもってok\r\n or error\r\nを返す。
+jogCommand(500 , 1000)#X軸500mmへ1000mm/minで移動
+sleepUntilMotionComplete(500 , 1000)
 
 ser.write(jogCancel)      #ジョグキャンセルコマンド
 line = ser.readline()
 print(line)
-#ser.write(str.encode('$J=X500 F10000\n'))      #X軸400mmへ移動
-#line = ser.readline()#ジョグコマンドは、実行の完了ではなくバッファへの到達をもってok\r\n or error\r\nを返す。
-#print(line)
 
-#中断が見やすいようにX500mmへ到達する前にabort
-#time.sleep(1)
-
-
-#ser.write(jogCancel)      #ジョグキャンセルコマンド
-#line = ser.readline()
-#print(line)
-#ser.write(str.encode('$J=X600 F10000\n'))      #X軸10mmへ移動
-#line = ser.readline()
-#print(line)
-
-#中断が見やすいようにX500mmへ到達する前にabort
-#time.sleep(1)
-
-ser.write(str.encode('$J=X10 F10000\n'))      #X軸10mmへ移動
-line = ser.readline()
-print(line)
-
-
-for num in range(10,500,10):
-    #中断が見やすいようにX500mmへ到達する前にabort
-    time.sleep(0.1)
-    ser.write(jogCancel)      #ジョグキャンセルコマンド
-    line = ser.readline()
-    print(line)
-    ser.write(str.encode('$J=X'+str(num)+' F10000\n'))      #X軸10mmへ移動
-    line = ser.readline()
-    print(line)
-
-for num in range(500,10,-10):
-    #中断が見やすいようにX500mmへ到達する前にabort
-    time.sleep(0.1)
-    ser.write(str.encode('$J=X'+str(num)+' F10000\n'))      #X軸10mmへ移動
-    line = ser.readline()
-    print(line)
+jogCommand(10 , 500)#X軸10mmへ500mm/minで移動
+sleepUntilMotionComplete(500-10 , 500)
 
 
 ser.close()             # ポートのクローズ
