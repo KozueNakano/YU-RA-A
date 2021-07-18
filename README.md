@@ -187,3 +187,11 @@ GRBL for ESP32をベースに、基板については本試作用に設計して
 [https://www.jst-mfg.com/product/detail.php?series=277](https://www.jst-mfg.com/product/detail.php?series=277)
 - ACアダプタ
 ACアダプタは12V2A以上のものを使用してください。LEDを使用する場合は、LEDの消費電流も見込んで余裕のあるACアダプタを使用してください。
+
+## 設計資料
+- 機構設計資料
+[https://a360.co/3z8dL4G](https://a360.co/3z8dL4G)
+[https://a360.co/3ev3BTW](https://a360.co/3ev3BTW)
+- 回路設計資料
+[https://a360.co/36Lkjdw](https://a360.co/36Lkjdw)
+[https://a360.co/3xPvQnY](https://a360.co/3xPvQnY)
